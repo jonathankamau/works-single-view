@@ -4,21 +4,36 @@
 <div class="container col-xs-12">
   <div class="row">
     <div class="col">
-        <h1>Upload a CSV file</h1>
+        <h1>Upload CSV files (You can select more than one)</h1>
       <hr>
         <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
-            <label>Select CSV file</label>
+            <br/>
             <div class="custom-file">
-                <label class="custom-file-label" for="upload">Select files...</label>
-                <input type="file" class="custom-file-input" name="upload" accept=".csv" multiple>
+                <label class="custom-file-label" for="upload">Select CSV files...</label>
+                <input type="file" class="custom-file-input" id="upload" name="upload" accept=".csv" onchange="javascript:updateList()" multiple>
             </div>
+            <br/>
+            <hr>
+            <p>Files selected for upload:</p>
+            <div id="uploadList"></div>
             </div>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>
     </div>
   </div>
 </div>
-</html>
+
+<script>
+updateList = function() {
+    var input = document.getElementById('upload');
+    var output = document.getElementById('uploadList');
+    var children = "";
+    for (var i = 0; i < input.files.length; ++i) {
+        children += '<li>' + input.files.item(i).name + '</li>';
+    }
+    output.innerHTML = '<ul>'+children+'</ul>';
+}
+</script>
 
 {% endblock %}
