@@ -96,11 +96,10 @@ class UploadMusicWorks(Resource):
             
             upload_file.save(
                 os.path.join(current_app.config['UPLOAD_FOLDER'], secured_file_name))
+
+            database_conn.save_data()
             
             return redirect(request.url)
-            
-            database_conn.save_data()
-
         
         headers = {'Content-Type': 'text/html'}
 
