@@ -28,6 +28,21 @@ Create a virtual environment that you will use to run the python scripts and the
 
 - Running the above command executes the following steps:
     - It loads some of the Spark dependencies that will be needed in performing aggregating and reconciling actions on the Spark dataframes.
+    - It creates a spark session by calling the `create_spark_session` method in the [spark_session](scripts/spark_session.py) python file.
+    - Using the extract_data method in the [ExtractWorks](scripts/extract.py) class, the metadata gets extracted from the csv to a dataframe and aggregation gets done on the data in the dataframe.
+    - A database connection is created through the class [here](scripts/database_connection.py) using the sqlalchemy library.
+    - The table music_works is created if it does not exist and the data from the dataframe gets loaded on the table.
+    - For any additional data that gets added from other csv sources and has gone through the above process of matching and reconciliation, a temporary table is set up with that data, then it gets merged with the existing music_works table in a way that ensures no duplicates are created and it will contain the most complete record for each musical work.
+
+### Questions
+**Describe briefly the matching and reconciling method chosen.**
+
+- Special ascii characters that may be in the `title` and `contributors` texts get replaced with alphabet characters. This helps with accurately matching those values, if duplicates exist for the same iswc.
+- The data is grouped by iswc and the `title`, `contributors` and `sources` data that are connected to the same iswc get merged together, and if there are duplicates of any of those fields for the same iswc, they get dropped so as to have a single data record for that musical work.
+
+**We constantly receive metadata from our providers, how would you automatize the process?**
+
+- I would automatize the process by creating an dynnamic ETL pipeline that is managed by a tool such as Apache Airflow. With Airflow, I can create custom operators that will perform the reusable tasks of extracting the data from the csv, matching and reconciling it, then finally loading it. I could set it to trigger periodically (for example once a day) to check for any new files and if there are new ones, it runs the pipeline.
 
 ### Instructions to run the Works Single View API (built using Flask Restful)
 
@@ -68,3 +83,14 @@ Create a virtual environment that you will use to run the python scripts and the
 - After selecting them, you will see them listed on the page.
 - Click on the `Upload` button to import them. 
 - A reconciled copy of the imported data will be stored in the `data` folder and the scripts to match and reconcile the data with the database will be executed.
+
+### Questions
+**Imagine that the Single View has 20 million musical works, do you think your solution would have a similar response time?**
+
+- No, it won't have a similar response time.
+
+**If not, what would you do to improve it?**
+- I would make use of Elasticsearch to for data queries.
+- I would host the API on an EC2 instance on AWS and take advantage of the Load Balancer tool that will help with the utilization of speed and capacity.
+- I will make use of asynchronous methods where need be so as to ensure smooth handling of requests.
+
