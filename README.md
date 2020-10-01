@@ -3,6 +3,7 @@
 ## Requirements
 
 Python 3.7.7
+
 Dependencies are listed in the [requirements.txt](requirements.txt) file.
 
 Clone the repo to your local machine by running either:
